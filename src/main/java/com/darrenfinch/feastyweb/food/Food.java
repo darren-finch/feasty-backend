@@ -14,9 +14,12 @@ import java.util.Objects;
 @Table(name = "food")
 public class Food {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
+
+    @Column(name="userId")
+    private Long userId;
 
     @Column(name = "title")
     private String title;
