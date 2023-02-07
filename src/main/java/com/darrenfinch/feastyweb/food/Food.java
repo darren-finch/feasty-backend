@@ -6,10 +6,7 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
+@Data
 @Entity
 @Table(name = "food")
 public class Food {
@@ -18,7 +15,7 @@ public class Food {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name="userId")
+    @Column(name="user_id")
     private Long userId;
 
     @Column(name = "title")

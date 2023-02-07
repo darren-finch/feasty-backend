@@ -26,7 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // @formatter:off
         return http.authorizeHttpRequests()
-                .requestMatchers("/api/foods**")
+                .requestMatchers("/api/**")
                     .authenticated()
                 .anyRequest()
                     .permitAll()
