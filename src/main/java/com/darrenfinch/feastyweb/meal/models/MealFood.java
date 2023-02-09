@@ -11,25 +11,28 @@ import java.util.Objects;
 @Getter
 @Setter
 @RequiredArgsConstructor
-@ToString(exclude = "meal")
 @Entity
 @Table(name = "meal_food")
 public class MealFood {
     @EmbeddedId
+    @ToString.Include
     private MealFoodCombinedId combinedId;
 
     @ManyToOne
     @MapsId("mealId")
     @JoinColumn(name = "meal_id")
     @JsonBackReference
+    @ToString.Exclude
     private Meal meal;
 
     @ManyToOne
     @MapsId("foodId")
     @JoinColumn(name = "food_id")
+    @ToString.Include
     private Food baseFood;
 
     @Column(name = "desired_quantity")
+    @ToString.Include
     private double desiredQuantity;
 
     @Override

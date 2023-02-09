@@ -10,4 +10,7 @@ import java.util.List;
 public interface MealPlanMealRepository extends JpaRepository<MealPlanMeal, MealPlanMealCombinedId> {
     @RestResource(exported = false)
     List<MealPlanMeal> findAllByMealPlanId(Long mealPlanId);
+
+    @RestResource(exported = false)
+    void deleteAllInBatchByMealId(Long mealId);
 }

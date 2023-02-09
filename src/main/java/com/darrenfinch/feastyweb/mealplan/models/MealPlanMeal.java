@@ -26,7 +26,7 @@ public class MealPlanMeal {
     @ToString.Exclude
     private MealPlan mealPlan;
 
-    @OneToOne
+    @ManyToOne
     @MapsId("mealId")
     @ToString.Include
     @JoinColumn(name ="meal_id")

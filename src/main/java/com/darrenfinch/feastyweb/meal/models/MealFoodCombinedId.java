@@ -1,7 +1,8 @@
 package com.darrenfinch.feastyweb.meal.models;
 
-import jakarta.persistence.*;
-import lombok.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+import lombok.Data;
 
 import java.io.Serializable;
 

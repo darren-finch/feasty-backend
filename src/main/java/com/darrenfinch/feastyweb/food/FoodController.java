@@ -1,6 +1,7 @@
 package com.darrenfinch.feastyweb.food;
 
 import com.darrenfinch.feastyweb.config.auth.UserIdManager;
+import com.darrenfinch.feastyweb.meal.repositories.MealFoodRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,12 @@ public class FoodController {
 
     @Autowired
     private UserIdManager userIdManager;
+
+    @Autowired
+    private MealFoodRepository mealFoodRepository;
+
+    @Autowired
+    private FoodService foodService;
 
     @GetMapping("/api/foods")
     public ResponseEntity<List<Food>> getFoods(@RequestParam(value = "title", required = false) String title) {
@@ -56,11 +63,11 @@ public class FoodController {
 
     @DeleteMapping("/api/foods/{foodId}")
     public ResponseEntity<Void> deleteFood(@PathVariable("foodId") long foodId) {
-        final var food = repository.findById(foodId);
-        if (food.isPresent() && userIdManager.userIsAccessingTheirOwnResource(food.get().getUserId())) {
-            repository.deleteById(foodId);
+        try {
+            foodService.deleteFood(foodId);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -1,11 +1,10 @@
-package com.darrenfinch.feastyweb.meal;
+package com.darrenfinch.feastyweb.meal.controllers;
 
 import com.darrenfinch.feastyweb.config.auth.UserIdManager;
 import com.darrenfinch.feastyweb.meal.models.Meal;
 import com.darrenfinch.feastyweb.meal.repositories.MealRepository;
+import com.darrenfinch.feastyweb.meal.services.MealService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +21,9 @@ public class MealController {
 
     @Autowired
     private UserIdManager userIdManager;
+
+    @Autowired
+    private MealService mealService;
 
     @GetMapping("/api/meals")
     public ResponseEntity<List<Meal>> getMeals(@RequestParam(value = "title", required = false) String title) {
@@ -57,11 +59,11 @@ public class MealController {
 
     @DeleteMapping("/api/meals/{mealId}")
     public ResponseEntity<Void> deleteMeal(@PathVariable("mealId") long mealId) {
-        final var meal = mealRepository.findById(mealId);
-        if (meal.isPresent() && userIdManager.userIsAccessingTheirOwnResource(meal.get().getUserId())) {
-            mealRepository.deleteById(mealId);
+        try {
+            mealService.deleteMeal(mealId);
             return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception exception) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
