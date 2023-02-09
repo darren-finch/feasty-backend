@@ -2,7 +2,6 @@ package com.darrenfinch.feastyweb.meal;
 
 import com.darrenfinch.feastyweb.config.auth.UserIdManager;
 import com.darrenfinch.feastyweb.meal.models.Meal;
-import com.darrenfinch.feastyweb.meal.repositories.MealFoodRepository;
 import com.darrenfinch.feastyweb.meal.repositories.MealRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -19,9 +18,6 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 public class MealController {
     @Autowired
     private MealRepository mealRepository;
-
-    @Autowired
-    private MealFoodRepository mealFoodRepository;
 
     @Autowired
     private UserIdManager userIdManager;

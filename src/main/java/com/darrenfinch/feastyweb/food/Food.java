@@ -6,7 +6,10 @@ import org.hibernate.Hibernate;
 
 import java.util.Objects;
 
-@Data
+@Getter
+@Setter
+@ToString
+@RequiredArgsConstructor
 @Entity
 @Table(name = "food")
 public class Food {

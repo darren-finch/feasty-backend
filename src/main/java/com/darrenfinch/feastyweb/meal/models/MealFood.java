@@ -4,14 +4,19 @@ import com.darrenfinch.feastyweb.food.Food;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.Hibernate;
 
-@Data
+import java.util.Objects;
+
+@Getter
+@Setter
+@RequiredArgsConstructor
 @ToString(exclude = "meal")
 @Entity
 @Table(name = "meal_food")
 public class MealFood {
     @EmbeddedId
-    private MealFoodKey combinedId;
+    private MealFoodCombinedId combinedId;
 
     @ManyToOne
     @MapsId("mealId")
@@ -27,7 +32,16 @@ public class MealFood {
     @Column(name = "desired_quantity")
     private double desiredQuantity;
 
-    public void setUserIdOfFood(Long userId) {
-        baseFood.setUserId(userId);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        MealFood mealFood = (MealFood) o;
+        return combinedId != null && Objects.equals(combinedId, mealFood.combinedId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(combinedId);
     }
 }

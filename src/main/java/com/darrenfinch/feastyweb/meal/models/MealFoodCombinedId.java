@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Data
 @Embeddable
-public class MealFoodKey implements Serializable {
+public class MealFoodCombinedId implements Serializable {
     @Column(name = "meal_id", nullable = false)
     private Long mealId;
 

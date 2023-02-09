@@ -1,4 +1,4 @@
-package com.darrenfinch.feastyweb.meal.models;
+package com.darrenfinch.feastyweb.mealplan.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -13,8 +13,8 @@ import java.util.Objects;
 @ToString
 @RequiredArgsConstructor
 @Entity
-@Table(name = "meal")
-public class Meal {
+@Table(name = "meal_plan")
+public class MealPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
@@ -26,17 +26,29 @@ public class Meal {
     @Column(name = "title")
     private String title;
 
+    @Column(name = "required_calories")
+    private int requiredCalories;
+
+    @Column(name = "required_fats")
+    private int requiredFats;
+
+    @Column(name = "required_carbs")
+    private int requiredCarbs;
+
+    @Column(name = "required_proteins")
+    private int requiredProteins;
+
     @JsonManagedReference
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "mealPlan", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
-    private List<MealFood> mealFoods;
+    private List<MealPlanMeal> mealPlanMeals;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Meal meal = (Meal) o;
-        return id != null && Objects.equals(id, meal.id);
+        MealPlan mealPlan = (MealPlan) o;
+        return id != null && Objects.equals(id, mealPlan.id);
     }
 
     @Override
