@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -21,17 +22,13 @@ public class FoodController {
     private UserIdManager userIdManager;
 
     @GetMapping("/api/foods")
-    public ResponseEntity<Page<Food>> getFoods(@RequestParam(value = "title", required = false) String title, @RequestParam(value = "pageSize", required = false, defaultValue = "20") int pageSize) {
-        if (pageSize < 1) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
-
+    public ResponseEntity<List<Food>> getFoods(@RequestParam(value = "title", required = false) String title) {
         long userId = userIdManager.getUserId();
 
         if (isEmpty(title)) {
-            return new ResponseEntity<>(repository.findByUserId(userId, Pageable.ofSize(pageSize)), HttpStatus.OK);
+            return new ResponseEntity<>(repository.findByUserId(userId), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(repository.findByTitleContainingAndUserIdIs(title, userId, Pageable.ofSize(pageSize)), HttpStatus.OK);
+            return new ResponseEntity<>(repository.findByTitleContainingAndUserIdIs(title, userId), HttpStatus.OK);
         }
     }
 

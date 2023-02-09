@@ -1,14 +1,14 @@
 package com.darrenfinch.feastyweb.food;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RestResource;
 
+import java.util.List;
+
 public interface FoodRepository extends JpaRepository<Food, Long> {
     @RestResource(exported = false)
-    Page<Food> findByUserId(long userId, Pageable pageable);
+    List<Food> findByUserId(long userId);
 
     @RestResource(exported = false)
-    Page<Food> findByTitleContainingAndUserIdIs(String title, long userId, Pageable pageable);
+    List<Food> findByTitleContainingAndUserIdIs(String title, long userId);
 }
