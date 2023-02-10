@@ -1,7 +1,3 @@
-java:
-  runtime:
-    version: 17
-
 application:
   audience: ${AUTH0_AUDIENCE}
   client-origin-url: ${CLIENT_ORIGIN_URL}
