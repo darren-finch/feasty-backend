@@ -1,1 +1,1 @@
-web: java -D server.port=$PORT -jar target/feasty-web-1.jar
+web: java -Dserver.port=$PORT -jar target/feasty-web-1.jar
