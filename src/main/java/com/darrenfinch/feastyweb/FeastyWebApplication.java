@@ -20,9 +20,9 @@ public class FeastyWebApplication {
 		CLIENT_ORIGIN_URL,
 		AUTH0_DOMAIN,
 		AUTH0_AUDIENCE,
-		DB_URL,
-		DB_USERNAME,
-		DB_PASSWORD
+		DATABASE_URL,
+		DATABASE_USERNAME,
+		DATABASE_PASSWORD
 	}
 
 	public static void main(String[] args) {
