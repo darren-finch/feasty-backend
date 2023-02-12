@@ -21,8 +21,6 @@ public class FeastyWebApplication {
 		AUTH0_DOMAIN,
 		AUTH0_AUDIENCE,
 		DATABASE_URL,
-		DATABASE_USERNAME,
-		DATABASE_PASSWORD
 	}
 
 	public static void main(String[] args) {
