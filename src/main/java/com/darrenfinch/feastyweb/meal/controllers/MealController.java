@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -31,7 +32,7 @@ public class MealController {
         if (isEmpty(title)) {
             return new ResponseEntity<>(mealRepository.findByUserId(userId), HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(mealRepository.findByTitleContainingAndUserIdIs(title, userId), HttpStatus.OK);
+            return new ResponseEntity<>(mealRepository.findByTitleContainingAndUserIdIs(title.toLowerCase(Locale.ROOT), userId), HttpStatus.OK);
         }
     }
 
