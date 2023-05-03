@@ -530,3 +530,7 @@ FodyWeavers.xsd
 
 # MY CODE
 .env
+.vscode
+*.db
+*.db-shm
+*.db-wal
