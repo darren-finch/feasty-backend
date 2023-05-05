@@ -8,7 +8,7 @@ using new_backend.Services;
 namespace NewBackendTest;
 
 [TestClass]
-public class IFoodControllerTests
+public class FoodControllerTests
 {
     private IFoodService foodService;
     private FoodController SUT;

@@ -8,20 +8,23 @@ namespace new_backend.Services
     {
         private IFoodRepository foodRepository;
 
-        public FoodService(IFoodRepository foodRepository)
+        private long userId = 1;
+
+        public FoodService(IFoodRepository foodRepository, IAuthManager authManager)
         {
             this.foodRepository = foodRepository;
+            this.userId = authManager.GetUserId();
         }
 
         public async Task<IList<Food>> GetFoods(string? titleQuery = null)
         {
             if (titleQuery == null)
             {
-                return await foodRepository.GetAllFoodsForCurrentUser();
+                return await foodRepository.GetAllFoodsForUser(userId);
             }
             else
             {
-                return await foodRepository.FindFoodsForCurrentUser(titleQuery);
+                return await foodRepository.GetFoodsByTitleForUser(titleQuery, userId);
             }
         }
 
@@ -32,6 +35,10 @@ namespace new_backend.Services
             {
                 throw new NotFoundException("Could not find a food with id " + foodId);
             }
+            if (food.UserId != userId)
+            {
+                throw new UnauthorizedException("You are not authorized to access this food.");
+            }
 
             return food;
         }
@@ -40,11 +47,32 @@ namespace new_backend.Services
         {
             if (food.Id < 0)
             {
+                food.UserId = userId;
                 await foodRepository.AddFood(food);
             }
             else
             {
-                await foodRepository.UpdateFood(food);
+                var existingFood = await foodRepository.GetFoodById(food.Id);
+
+                if (existingFood == null)
+                {
+                    throw new NotFoundException("Could not find food with id " + food.Id + " to update.");
+                }
+
+                if (existingFood.UserId != userId)
+                {
+                    throw new UnauthorizedException("You are not authorized to update this food.");
+                }
+
+                existingFood.Title = food.Title;
+                existingFood.Quantity = food.Quantity;
+                existingFood.Unit = food.Unit;
+                existingFood.Calories = food.Calories;
+                existingFood.Fats = food.Fats;
+                existingFood.Carbs = food.Carbs;
+                existingFood.Proteins = food.Proteins;
+
+                await foodRepository.UpdateFood(existingFood);
             }
 
             return food.Id;
@@ -58,6 +86,10 @@ namespace new_backend.Services
             if (food == null)
             {
                 throw new NotFoundException("Could not find food with id " + foodId + " to delete.");
+            }
+            if (food.UserId != userId)
+            {
+                throw new UnauthorizedException("You are not authorized to delete this food.");
             }
 
             await foodRepository.DeleteFood(food);

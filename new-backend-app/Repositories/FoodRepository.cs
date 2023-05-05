@@ -20,45 +20,24 @@ namespace new_backend.Repositories
             this.userId = authManager.GetUserId();
         }
 
-        private long GetUserIdNumberFromAuthName(string authName)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            for (int i = 0; i < authName.Length; i++)
-            {
-                if (char.IsDigit(authName[i]))
-                {
-                    sb.Append(authName[i]);
-                }
-            }
-
-            return long.Parse(sb.ToString().Substring(0, Math.Min(10, sb.Length)));
-        }
-
-        public async Task<IList<Food>> FindFoodsForCurrentUser(string titleQuery)
-        {
-            return await dbContext.Foods.Where(food => food.Title.ToLower().Contains(titleQuery.ToLower()) && food.UserId == userId).ToListAsync();
-        }
-
-        public async Task<IList<Food>> GetAllFoodsForCurrentUser()
+        public async Task<IList<Food>> GetAllFoodsForUser(long userId)
         {
             return await dbContext.Foods.Where(food => food.UserId == userId).ToListAsync();
+        }
+
+        public async Task<IList<Food>> GetFoodsByTitleForUser(string titleQuery, long userId)
+        {
+            return await dbContext.Foods.Where(food => food.Title.ToLower().Contains(titleQuery.ToLower()) && food.UserId == userId).ToListAsync();
         }
 
         public async Task<Food?> GetFoodById(long foodId)
         {
             var food = await dbContext.Foods.FindAsync(foodId);
-            if (food != null && food.UserId != userId)
-            {
-                throw new UnauthorizedException("You are not authorized to access this food.");
-            }
             return food;
         }
 
         public async Task<long> AddFood(Food food)
         {
-            food.UserId = userId;
-
             // This is a new food, so we need to set the id to 0 so that EF Core knows to automatically generate an id for it.
             food.Id = 0;
 
@@ -68,29 +47,9 @@ namespace new_backend.Repositories
             return food.Id;
         }
 
-        // Assumes that the food is being tracked by EF Core.
+        // Assumes that the food is being tracked by EF Core so it just saves the changes.
         public async Task<long> UpdateFood(Food food)
         {
-            var trackedFood = await dbContext.Foods.FindAsync(food.Id);
-
-            if (trackedFood == null)
-            {
-                throw new NotFoundException("Could not find food with id " + food.Id + " to update.");
-            }
-
-            if (trackedFood.UserId != userId)
-            {
-                throw new UnauthorizedException("You are not authorized to update this food.");
-            }
-
-            trackedFood.Title = food.Title;
-            trackedFood.Quantity = food.Quantity;
-            trackedFood.Unit = food.Unit;
-            trackedFood.Calories = food.Calories;
-            trackedFood.Fats = food.Fats;
-            trackedFood.Carbs = food.Carbs;
-            trackedFood.Proteins = food.Proteins;
-
             await dbContext.SaveChangesAsync();
 
             return food.Id;
@@ -98,11 +57,6 @@ namespace new_backend.Repositories
 
         public async Task DeleteFood(Food food)
         {
-            if (food.UserId != userId)
-            {
-                throw new UnauthorizedException("You are not authorized to delete this food.");
-            }
-
             dbContext.Foods.Remove(food);
 
             await dbContext.SaveChangesAsync();
