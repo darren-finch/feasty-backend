@@ -124,15 +124,20 @@ public class MealsServiceTests
         var meal = A.Dummy<Meal>();
         var mealFood1 = A.Dummy<MealFood>();
         A.CallTo(() => mealFood1.FoodId).Returns(foodId);
-        A.CallTo(() => meal.MealFoods).Returns(new List<MealFood> { mealFood1 });
 
-        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(new List<Food>());
+        var listOfMealFoods = new List<MealFood> { mealFood1 };
+        A.CallTo(() => meal.MealFoods).Returns(listOfMealFoods);
+
+        var emptyListOfReferencedFoods = new List<Food>();
+        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(emptyListOfReferencedFoods);
 
         // Act
         Func<Task> act = async () => await SUT.SaveMeal(meal);
 
         // Assert
         await act.Should().ThrowAsync<NotFoundException>();
+        A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
     }
 
     [TestMethod]
@@ -144,28 +149,34 @@ public class MealsServiceTests
         var meal = A.Dummy<Meal>();
         var mealFood1 = A.Dummy<MealFood>();
         A.CallTo(() => mealFood1.FoodId).Returns(foodId);
-        A.CallTo(() => meal.MealFoods).Returns(new List<MealFood> { mealFood1 });
+
+        var listOfMealFoods = new List<MealFood> { mealFood1 };
+        A.CallTo(() => meal.MealFoods).Returns(listOfMealFoods);
 
         var food1 = A.Dummy<Food>();
         A.CallTo(() => food1.Id).Returns(foodId);
         A.CallTo(() => food1.UserId).Returns(GlobalTestData.WRONG_USER_ID);
-        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(new List<Food>() { food1 });
+
+        var listOfFoodsWithAFoodThatBelongsToAnotherUser = new List<Food> { food1 };
+        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(listOfFoodsWithAFoodThatBelongsToAnotherUser);
 
         // Act
         Func<Task> act = async () => await SUT.SaveMeal(meal);
 
         // Assert
         await act.Should().ThrowAsync<UnauthorizedException>();
+        A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
     }
 
     [TestMethod]
-    public async Task SaveMeal_GivenAMealWithANegativeId_AddsTheMeal()
+    public async Task SaveMeal_GivenAMealWithValidMealFoodsAndANegativeId_AddsTheMeal()
     {
         // Arrange
         var meal = A.Dummy<Meal>();
         A.CallTo(() => meal.Id).Returns(-1);
 
-        AddFakeMealFoodDataToFakeMeal(meal);
+        AddValidFakeMealFoodDataToFakeMeal(meal);
 
         // Act
         await SUT.SaveMeal(meal);
@@ -176,7 +187,7 @@ public class MealsServiceTests
     }
 
     [TestMethod]
-    public async Task SaveMeal_GivenAMealWithAPositiveIdThatBelongsToTheUser_UpdatesTheMeal()
+    public async Task SaveMeal_GivenAMealWithValidMealFoodsAndAPositiveIdThatBelongsToTheUser_UpdatesTheMeal()
     {
         // Arrange
         var mealId = 1;
@@ -189,7 +200,7 @@ public class MealsServiceTests
         A.CallTo(() => newMeal.Id).Returns(mealId);
         A.CallTo(() => newMeal.Title).Returns("test");
 
-        AddFakeMealFoodDataToFakeMeal(newMeal);
+        AddValidFakeMealFoodDataToFakeMeal(newMeal);
 
         A.CallTo(() => mealRepository.GetMealById(mealId)).Returns(Task.FromResult<Meal?>(existingMeal));
 
@@ -204,7 +215,7 @@ public class MealsServiceTests
     }
 
     [TestMethod]
-    public async Task SaveMeal_GivenAMealWithAPositiveIdThatDoesNotBelongToTheUser_ThrowsUnauthorizedException()
+    public async Task SaveMeal_GivenAMealWithValidMealFoodsAndAPositiveIdThatDoesNotBelongToTheUser_ThrowsUnauthorizedException()
     {
         // Arrange
         var mealId = 1;
@@ -216,7 +227,7 @@ public class MealsServiceTests
         var newMeal = A.Dummy<Meal>();
         A.CallTo(() => newMeal.Id).Returns(mealId);
 
-        AddFakeMealFoodDataToFakeMeal(newMeal);
+        AddValidFakeMealFoodDataToFakeMeal(newMeal);
 
         A.CallTo(() => mealRepository.GetMealById(mealId)).Returns(Task.FromResult<Meal?>(existingMeal));
 
@@ -230,7 +241,7 @@ public class MealsServiceTests
     }
 
     [TestMethod]
-    public async Task SaveMeal_GivenAMealWithAPositiveIdThatDoesNotExist_ThrowsANotFoundException()
+    public async Task SaveMeal_GivenAMealWithValidMealFoodsAndAPositiveIdThatDoesNotExist_ThrowsANotFoundException()
     {
         // Arrange
         var mealId = 1;
@@ -238,7 +249,7 @@ public class MealsServiceTests
         var newMeal = A.Dummy<Meal>();
         A.CallTo(() => newMeal.Id).Returns(mealId);
 
-        AddFakeMealFoodDataToFakeMeal(newMeal);
+        AddValidFakeMealFoodDataToFakeMeal(newMeal);
 
         A.CallTo(() => mealRepository.GetMealById(mealId)).Returns(Task.FromResult<Meal?>(null));
 
@@ -303,17 +314,21 @@ public class MealsServiceTests
     }
 
     // Adds valid meal food data to the meal passed in.
-    private void AddFakeMealFoodDataToFakeMeal(Meal meal)
+    private void AddValidFakeMealFoodDataToFakeMeal(Meal meal)
     {
         var foodId = 1;
+
         var mealFood1 = A.Dummy<MealFood>();
         A.CallTo(() => mealFood1.FoodId).Returns(foodId);
+
+        var listOfValidMealFoods = new List<MealFood> { mealFood1 };
+        A.CallTo(() => meal.MealFoods).Returns(listOfValidMealFoods);
 
         var food1 = A.Dummy<Food>();
         A.CallTo(() => food1.Id).Returns(foodId);
         A.CallTo(() => food1.UserId).Returns(GlobalTestData.USER_ID);
-        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(new List<Food>() { food1 });
 
-        A.CallTo(() => meal.MealFoods).Returns(new List<MealFood> { mealFood1 });
+        var listOfFoods = new List<Food> { food1 };
+        A.CallTo(() => foodRepository.GetFoodsByIds(A<List<long>>._)).Returns(listOfFoods);
     }
 }
