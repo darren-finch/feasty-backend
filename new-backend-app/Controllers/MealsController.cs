@@ -15,7 +15,7 @@ public class MealsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> GetMeals([FromQuery] string? titleQuery = null)
+    public async Task<IActionResult> GetMeals([FromQuery(Name = "title")] string? titleQuery = null)
     {
         return Ok(await mealsService.GetMeals(titleQuery));
     }
