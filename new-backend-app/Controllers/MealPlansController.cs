@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using new_backend.Exceptions;
 using new_backend.Models;
 using new_backend.Services;
 
@@ -29,6 +30,9 @@ public class MealPlansController : Controller
     [HttpPut]
     public async Task<IActionResult> SaveMealPlan([FromBody] MealPlan mealPlan)
     {
+        if (!ModelState.IsValid)
+            throw new BadRequestException($"Invalid meal plan object.");
+
         return Ok(await mealPlansService.SaveMealPlan(mealPlan));
     }
 
