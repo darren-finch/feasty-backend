@@ -15,14 +15,14 @@ public class MealPlanMealsController : Controller
     }
 
     [HttpPut]
-    public async Task<IActionResult> SaveMealPlanMeal(MealPlanMeal mealPlanMeal)
+    public async Task<IActionResult> SaveMealPlanMeal([FromBody] MealPlanMeal mealPlanMeal)
     {
         await mealPlanMealService.SaveMealPlanMeal(mealPlanMeal);
         return Ok();
     }
 
-    [HttpDelete("{mealPlanMealId}")]
-    public async Task<IActionResult> DeleteMealPlanMeal(long mealId, long mealPlanId)
+    [HttpDelete]
+    public async Task<IActionResult> DeleteMealPlanMeal([FromQuery] long mealId, [FromQuery] long mealPlanId)
     {
         await mealPlanMealService.DeleteMealPlanMeal(mealId, mealPlanId);
         return Ok();

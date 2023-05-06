@@ -25,6 +25,8 @@ builder.Services.AddScoped<IMealsRepository, MealsRepository>();
 builder.Services.AddScoped<IMealsService, MealsService>();
 builder.Services.AddScoped<IMealPlanMealsRepository, MealPlanMealsRepository>();
 builder.Services.AddScoped<IMealPlanMealsService, MealPlanMealsService>();
+builder.Services.AddScoped<IMealPlansRepository, MealPlansRepository>();
+builder.Services.AddScoped<IMealPlansService, MealPlansService>();
 
 // Add authentication and authorization
 var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";

@@ -9,6 +9,7 @@ namespace new_backend.Data
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealFood> MealFoods { get; set; }
         public DbSet<MealPlanMeal> MealPlanMeals { get; set; }
+        public DbSet<MealPlan> MealPlans { get; set; }
 
         public FeastyDbContext(DbContextOptions<FeastyDbContext> dbContextOptions) : base(dbContextOptions)
         {

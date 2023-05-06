@@ -4,7 +4,7 @@ using new_backend.Models;
 
 namespace new_backend.Repositories;
 
-public class MealPlanMealsRepository
+public class MealPlanMealsRepository : IMealPlanMealsRepository
 {
     private readonly FeastyDbContext dbContext;
 
@@ -17,12 +17,13 @@ public class MealPlanMealsRepository
     {
         return await dbContext.MealPlanMeals
             .Include(mealPlanMeal => mealPlanMeal.Meal)
+            .Include(mealPlanMeal => mealPlanMeal.MealPlan)
             .FirstOrDefaultAsync(mealPlanMeal => mealPlanMeal.MealId == mealId && mealPlanMeal.MealPlanId == mealPlanId);
     }
 
     public async Task SaveMealPlanMeal(MealPlanMeal mealPlanMeal)
     {
-        dbContext.MealPlanMeals.Update(mealPlanMeal);
+        dbContext.MealPlanMeals.Add(mealPlanMeal);
         await dbContext.SaveChangesAsync();
     }
 
