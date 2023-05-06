@@ -23,6 +23,8 @@ builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<IFoodService, FoodService>();
 builder.Services.AddScoped<IMealsRepository, MealsRepository>();
 builder.Services.AddScoped<IMealsService, MealsService>();
+builder.Services.AddScoped<IMealPlanMealsRepository, MealPlanMealsRepository>();
+builder.Services.AddScoped<IMealPlanMealsService, MealPlanMealsService>();
 
 // Add authentication and authorization
 var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";

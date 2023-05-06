@@ -8,6 +8,7 @@ namespace new_backend.Data
         public DbSet<Food> Foods { get; set; }
         public DbSet<Meal> Meals { get; set; }
         public DbSet<MealFood> MealFoods { get; set; }
+        public DbSet<MealPlanMeal> MealPlanMeals { get; set; }
 
         public FeastyDbContext(DbContextOptions<FeastyDbContext> dbContextOptions) : base(dbContextOptions)
         {
@@ -27,6 +28,21 @@ namespace new_backend.Data
                 .HasOne(mealFood => mealFood.BaseFood)
                 .WithMany()
                 .HasForeignKey(mealFood => mealFood.FoodId);
+
+
+
+            modelBuilder.Entity<MealPlanMeal>()
+                .HasKey(mealPlanMeal => new { mealPlanMeal.MealId, mealPlanMeal.MealPlanId });
+
+            modelBuilder.Entity<MealPlanMeal>()
+                .HasOne(mealPlanMeal => mealPlanMeal.Meal)
+                .WithMany()
+                .HasForeignKey(mealPlanMeal => mealPlanMeal.MealId);
+
+            modelBuilder.Entity<MealPlanMeal>()
+                .HasOne(mealPlanMeal => mealPlanMeal.MealPlan)
+                .WithMany(mealPlan => mealPlan.MealPlanMeals)
+                .HasForeignKey(mealPlanMeal => mealPlanMeal.MealPlanId);
         }
     }
 }
