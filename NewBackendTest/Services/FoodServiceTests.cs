@@ -120,6 +120,8 @@ public class FoodServiceTests
         await SUT.SaveFood(fakeFood);
 
         // Assert
+        A.CallToSet(() => fakeFood.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
+
         A.CallTo(() => foodRepository.AddFood(fakeFood)).MustHaveHappenedOnceExactly();
         A.CallTo(() => foodRepository.UpdateFood(fakeFood)).MustNotHaveHappened();
     }
@@ -154,7 +156,6 @@ public class FoodServiceTests
         await SUT.SaveFood(newFood);
 
         // Assert
-        var calls = Fake.GetCalls(existingFood);
         A.CallToSet(() => existingFood.Title).To(newFood.Title).MustHaveHappenedOnceExactly();
         A.CallToSet(() => existingFood.Quantity).To(newFood.Quantity).MustHaveHappenedOnceExactly();
         A.CallToSet(() => existingFood.Unit).To(newFood.Unit).MustHaveHappenedOnceExactly();

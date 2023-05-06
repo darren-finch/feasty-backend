@@ -182,6 +182,8 @@ public class MealsServiceTests
         await SUT.SaveMeal(meal);
 
         // Assert
+        A.CallToSet(() => meal.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
+
         A.CallTo(() => mealRepository.AddMeal(meal)).MustHaveHappenedOnceExactly();
         A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
     }
