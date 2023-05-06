@@ -15,9 +15,9 @@ namespace new_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetFoods([FromQuery] string? title = null)
+        public async Task<IActionResult> GetFoods([FromQuery] string? titleQuery = null)
         {
-            return Ok(await foodService.GetFoods(title));
+            return Ok(await foodService.GetFoods(titleQuery));
         }
 
         [HttpGet("{foodId}")]

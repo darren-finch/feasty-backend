@@ -24,11 +24,13 @@ public class FoodControllerTests
     public async Task GetFoods_ReturnsOkWithFoodsFromFoodService()
     {
         // Arrange
+        var titleQuery = "test";
+
         var expectedResult = A.CollectionOfDummy<Food>(2);
-        A.CallTo(() => foodService.GetFoods(A<string>._)).Returns(Task.FromResult(expectedResult));
+        A.CallTo(() => foodService.GetFoods(titleQuery)).Returns(Task.FromResult(expectedResult));
 
         // Act
-        var result = await SUT.GetFoods();
+        var result = await SUT.GetFoods(titleQuery);
 
         // Assert
         result.Should().BeOfType<OkObjectResult>();

@@ -21,6 +21,8 @@ builder.Services.AddScoped<IAuthManager, AuthManager>(serviceProvider =>
 });
 builder.Services.AddScoped<IFoodRepository, FoodRepository>();
 builder.Services.AddScoped<IFoodService, FoodService>();
+builder.Services.AddScoped<IMealsRepository, MealsRepository>();
+builder.Services.AddScoped<IMealsService, MealsService>();
 
 // Add authentication and authorization
 var domain = $"https://{builder.Configuration["Auth0:Domain"]}/";

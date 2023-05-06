@@ -8,11 +8,11 @@ using new_backend.Exceptions;
 namespace NewBackendTest;
 
 [TestClass]
-public class IFoodServiceTests
+public class FoodServiceTests
 {
     private IAuthManager authManager;
     private IFoodRepository foodRepository;
-    private IFoodService SUT;
+    private FoodService SUT;
 
     private const long USER_ID = 1;
     private const long WRONG_USER_ID = 2;
@@ -21,7 +21,7 @@ public class IFoodServiceTests
     public void Setup()
     {
         authManager = A.Fake<IAuthManager>();
-        A.CallTo(() => authManager.GetUserId()).Returns(USER_ID);
+        A.CallTo(() => authManager.GetUserId()).Returns(GlobalTestData.USER_ID);
 
         foodRepository = A.Fake<IFoodRepository>();
         SUT = new FoodService(foodRepository, authManager);
@@ -32,7 +32,7 @@ public class IFoodServiceTests
     {
         // Arrange
         var expectedResult = A.CollectionOfDummy<Food>(2);
-        A.CallTo(() => foodRepository.GetAllFoodsForUser(USER_ID)).Returns(Task.FromResult(expectedResult));
+        A.CallTo(() => foodRepository.GetAllFoodsForUser(GlobalTestData.USER_ID)).Returns(Task.FromResult(expectedResult));
 
         // Act
         var result = await SUT.GetFoods();
@@ -47,7 +47,7 @@ public class IFoodServiceTests
         // Arrange
         var titleQuery = "test";
         var expectedResult = A.CollectionOfDummy<Food>(2);
-        A.CallTo(() => foodRepository.GetFoodsByTitleForUser(titleQuery, USER_ID)).Returns(Task.FromResult(expectedResult));
+        A.CallTo(() => foodRepository.GetFoodsByTitleForUser(titleQuery, GlobalTestData.USER_ID)).Returns(Task.FromResult(expectedResult));
 
         // Act
         var result = await SUT.GetFoods(titleQuery);
@@ -64,7 +64,7 @@ public class IFoodServiceTests
 
         var fakeFood = A.Fake<Food>();
         fakeFood.Id = foodId;
-        fakeFood.UserId = USER_ID;
+        fakeFood.UserId = GlobalTestData.USER_ID;
 
         A.CallTo(() => foodRepository.GetFoodById(foodId)).Returns(Task.FromResult<Food?>(fakeFood));
 
@@ -98,7 +98,7 @@ public class IFoodServiceTests
 
         var fakeFood = A.Fake<Food>();
         fakeFood.Id = foodId;
-        fakeFood.UserId = 2;
+        fakeFood.UserId = GlobalTestData.WRONG_USER_ID;
 
         A.CallTo(() => foodRepository.GetFoodById(foodId)).Returns(Task.FromResult<Food?>(fakeFood));
 
@@ -133,7 +133,7 @@ public class IFoodServiceTests
 
         var existingFood = A.Fake<Food>();
         A.CallTo(() => existingFood.Id).Returns(foodId);
-        A.CallTo(() => existingFood.UserId).Returns(USER_ID);
+        A.CallTo(() => existingFood.UserId).Returns(GlobalTestData.USER_ID);
 
         var newFood = A.Fake<Food>();
         A.CallTo(() => newFood.Id).Returns(foodId);
@@ -175,7 +175,7 @@ public class IFoodServiceTests
 
         var existingFood = A.Fake<Food>();
         A.CallTo(() => existingFood.Id).Returns(foodId);
-        A.CallTo(() => existingFood.UserId).Returns(WRONG_USER_ID);
+        A.CallTo(() => existingFood.UserId).Returns(GlobalTestData.WRONG_USER_ID);
 
         var newFood = A.Fake<Food>();
         A.CallTo(() => newFood.Id).Returns(foodId);
@@ -197,7 +197,7 @@ public class IFoodServiceTests
         // Arrange
         var foodId = 1;
         var fakeFood = A.Fake<Food>();
-        A.CallTo(() => fakeFood.UserId).Returns(USER_ID);
+        A.CallTo(() => fakeFood.UserId).Returns(GlobalTestData.USER_ID);
         A.CallTo(() => foodRepository.GetFoodById(foodId)).Returns(Task.FromResult<Food?>(fakeFood));
 
         // Act
@@ -229,7 +229,7 @@ public class IFoodServiceTests
         var foodId = 1;
 
         var fakeFood = A.Fake<Food>();
-        A.CallTo(() => fakeFood.UserId).Returns(WRONG_USER_ID);
+        A.CallTo(() => fakeFood.UserId).Returns(GlobalTestData.WRONG_USER_ID);
         A.CallTo(() => foodRepository.GetFoodById(foodId)).Returns(Task.FromResult<Food?>(fakeFood));
 
         Func<Task> actAsync = async () => await SUT.DeleteFood(foodId);

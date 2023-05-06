@@ -30,6 +30,11 @@ namespace new_backend.Repositories
             return await dbContext.Foods.Where(food => food.Title.ToLower().Contains(titleQuery.ToLower()) && food.UserId == userId).ToListAsync();
         }
 
+        public async Task<IList<Food>> GetFoodsByIds(IList<long> foodIds)
+        {
+            return await dbContext.Foods.Where(food => foodIds.Contains(food.Id)).ToListAsync();
+        }
+
         public async Task<Food?> GetFoodById(long foodId)
         {
             var food = await dbContext.Foods.FindAsync(foodId);
@@ -60,6 +65,11 @@ namespace new_backend.Repositories
             dbContext.Foods.Remove(food);
 
             await dbContext.SaveChangesAsync();
+        }
+
+        public Task<IList<Food>> GetFoodsByIds(List<long> foodIds)
+        {
+            throw new NotImplementedException();
         }
     }
 }
