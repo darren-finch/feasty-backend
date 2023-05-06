@@ -137,7 +137,7 @@ public class MealsServiceTests
         // Assert
         await act.Should().ThrowAsync<NotFoundException>();
         A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
-        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.Save()).MustNotHaveHappened();
     }
 
     [TestMethod]
@@ -166,7 +166,7 @@ public class MealsServiceTests
         // Assert
         await act.Should().ThrowAsync<UnauthorizedException>();
         A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
-        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.Save()).MustNotHaveHappened();
     }
 
     [TestMethod]
@@ -174,18 +174,29 @@ public class MealsServiceTests
     {
         // Arrange
         var meal = A.Dummy<Meal>();
-        A.CallTo(() => meal.Id).Returns(-1);
+
+        var initialMealId = -1;
+        A.CallTo(() => meal.Id).Returns(initialMealId);
 
         AddValidFakeMealFoodDataToFakeMeal(meal);
 
+        var newMealId = 1;
+        A.CallTo(() => mealRepository.AddMeal(meal)).Returns(newMealId);
+
         // Act
-        await SUT.SaveMeal(meal);
+        var result = await SUT.SaveMeal(meal);
 
         // Assert
         A.CallToSet(() => meal.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
 
+        // This assertion is necessary because the code changes the id of the meal if it is newly added to the database.
+        A.CallToSet(() => meal.Id).To(newMealId).MustHaveHappenedOnceExactly();
+
         A.CallTo(() => mealRepository.AddMeal(meal)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.Save()).MustNotHaveHappened();
+
+        // Result should be the initial meal id because the meal is a dummy and the code can't change the id if the meal is a dummy.
+        result.Should().Be(initialMealId);
     }
 
     [TestMethod]
@@ -212,7 +223,7 @@ public class MealsServiceTests
         // Assert
         A.CallToSet(() => existingMeal.Title).To(newMeal.Title).MustHaveHappenedOnceExactly();
         A.CallToSet(() => existingMeal.MealFoods).To(newMeal.MealFoods).MustHaveHappenedOnceExactly();
-        A.CallTo(() => mealRepository.UpdateMeal(existingMeal)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => mealRepository.Save()).MustHaveHappenedOnceExactly();
         A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
     }
 
@@ -238,7 +249,7 @@ public class MealsServiceTests
 
         // Assert
         await act.Should().ThrowAsync<UnauthorizedException>();
-        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.Save()).MustNotHaveHappened();
         A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
     }
 
@@ -260,7 +271,7 @@ public class MealsServiceTests
 
         // Assert
         await act.Should().ThrowAsync<NotFoundException>();
-        A.CallTo(() => mealRepository.UpdateMeal(A<Meal>._)).MustNotHaveHappened();
+        A.CallTo(() => mealRepository.Save()).MustNotHaveHappened();
         A.CallTo(() => mealRepository.AddMeal(A<Meal>._)).MustNotHaveHappened();
     }
 

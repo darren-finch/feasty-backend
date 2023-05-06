@@ -35,6 +35,11 @@ namespace new_backend.Repositories
             return await dbContext.Foods.Where(food => foodIds.Contains(food.Id)).ToListAsync();
         }
 
+        public Task<IList<Food>> GetFoodsByIds(List<long> foodIds)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<Food?> GetFoodById(long foodId)
         {
             var food = await dbContext.Foods.FindAsync(foodId);
@@ -52,14 +57,6 @@ namespace new_backend.Repositories
             return food.Id;
         }
 
-        // Assumes that the food is being tracked by EF Core so it just saves the changes.
-        public async Task<long> UpdateFood(Food food)
-        {
-            await dbContext.SaveChangesAsync();
-
-            return food.Id;
-        }
-
         public async Task DeleteFood(Food food)
         {
             dbContext.Foods.Remove(food);
@@ -67,9 +64,9 @@ namespace new_backend.Repositories
             await dbContext.SaveChangesAsync();
         }
 
-        public Task<IList<Food>> GetFoodsByIds(List<long> foodIds)
+        public async Task Save()
         {
-            throw new NotImplementedException();
+            await dbContext.SaveChangesAsync();
         }
     }
 }

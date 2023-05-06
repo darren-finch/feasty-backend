@@ -40,7 +40,7 @@ public class MealPlansService : IMealPlansService
         if (newMealPlan.Id < 0)
         {
             newMealPlan.UserId = userId;
-            return await mealPlansRepository.AddMealPlan(newMealPlan);
+            newMealPlan.Id = await mealPlansRepository.AddMealPlan(newMealPlan);
         }
         else
         {
@@ -62,8 +62,10 @@ public class MealPlansService : IMealPlansService
             existingMealPlan.RequiredCarbs = newMealPlan.RequiredCarbs;
             existingMealPlan.RequiredProteins = newMealPlan.RequiredProteins;
 
-            return await mealPlansRepository.UpdateMealPlan(newMealPlan);
+            await mealPlansRepository.Save();
         }
+
+        return newMealPlan.Id;
     }
 
     public async Task DeleteMealPlan(long mealPlanId)

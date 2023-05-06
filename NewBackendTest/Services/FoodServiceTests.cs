@@ -113,17 +113,28 @@ public class FoodServiceTests
     public async Task SaveFood_GivenAFoodWithANegativeId_AddsTheFood()
     {
         // Arrange
-        var fakeFood = A.Fake<Food>();
-        fakeFood.Id = -1;
+        var newFood = A.Fake<Food>();
+
+        var initialFoodId = -1;
+        A.CallTo(() => newFood.Id).Returns(initialFoodId);
+
+        var newFoodId = 1;
+        A.CallTo(() => foodRepository.AddFood(newFood)).Returns(newFoodId);
 
         // Act
-        await SUT.SaveFood(fakeFood);
+        var result = await SUT.SaveFood(newFood);
 
         // Assert
-        A.CallToSet(() => fakeFood.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
+        A.CallToSet(() => newFood.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
 
-        A.CallTo(() => foodRepository.AddFood(fakeFood)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => foodRepository.UpdateFood(fakeFood)).MustNotHaveHappened();
+        // This assertion is necessary because the code changes the id of the food if it is newly added to the database.
+        A.CallToSet(() => newFood.Id).To(newFoodId).MustHaveHappenedOnceExactly();
+
+        A.CallTo(() => foodRepository.AddFood(newFood)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => foodRepository.Save()).MustNotHaveHappened();
+
+        // Result should be the initial meal id because the meal is a dummy and the code can't change the id if the meal is a dummy.
+        result.Should().Be(initialFoodId);
     }
 
     // TODO: Find a way to clean up the attribute settings for the fake foods.
@@ -164,7 +175,7 @@ public class FoodServiceTests
         A.CallToSet(() => existingFood.Carbs).To(newFood.Carbs).MustHaveHappenedOnceExactly();
         A.CallToSet(() => existingFood.Proteins).To(newFood.Proteins).MustHaveHappenedOnceExactly();
 
-        A.CallTo(() => foodRepository.UpdateFood(existingFood)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => foodRepository.Save()).MustHaveHappenedOnceExactly();
         A.CallTo(() => foodRepository.AddFood(A<Food>._)).MustNotHaveHappened();
     }
 
@@ -188,7 +199,7 @@ public class FoodServiceTests
 
         // Assert
         await actAsync.Should().ThrowAsync<UnauthorizedException>();
-        A.CallTo(() => foodRepository.UpdateFood(A<Food>._)).MustNotHaveHappened();
+        A.CallTo(() => foodRepository.Save()).MustNotHaveHappened();
         A.CallTo(() => foodRepository.AddFood(A<Food>._)).MustNotHaveHappened();
     }
 

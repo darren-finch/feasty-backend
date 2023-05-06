@@ -48,7 +48,7 @@ namespace new_backend.Services
             if (food.Id < 0)
             {
                 food.UserId = userId;
-                await foodRepository.AddFood(food);
+                food.Id = await foodRepository.AddFood(food);
             }
             else
             {
@@ -72,7 +72,7 @@ namespace new_backend.Services
                 existingFood.Carbs = food.Carbs;
                 existingFood.Proteins = food.Proteins;
 
-                await foodRepository.UpdateFood(existingFood);
+                await foodRepository.Save();
             }
 
             return food.Id;

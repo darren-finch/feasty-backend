@@ -9,7 +9,7 @@ namespace new_backend.Repositories
         Task<IList<Food>> GetFoodsByIds(IList<long> foodIds);
         Task<Food?> GetFoodById(long foodId);
         Task<long> AddFood(Food food);
-        Task<long> UpdateFood(Food food);
         Task DeleteFood(Food food);
+        Task Save();
     }
 }

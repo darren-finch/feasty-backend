@@ -41,16 +41,14 @@ public class MealPlansRepository : IMealPlansRepository
         return newMealPlan.Id;
     }
 
-    // Does not save meals.
-    public async Task<long> UpdateMealPlan(MealPlan updatedMealPlan)
-    {
-        await dbContext.SaveChangesAsync();
-        return updatedMealPlan.Id;
-    }
-
     public async Task DeleteMealPlan(MealPlan mealPlan)
     {
         dbContext.MealPlans.Remove(mealPlan);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task Save()
+    {
         await dbContext.SaveChangesAsync();
     }
 }

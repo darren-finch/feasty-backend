@@ -94,10 +94,12 @@ public class MealPlansServiceTests
     {
         // Arrange
         var mealPlan = A.Fake<MealPlan>();
-        A.CallTo(() => mealPlan.Id).Returns(-1);
 
-        var expectedResult = 1L;
-        A.CallTo(() => mealPlansRepository.AddMealPlan(mealPlan)).Returns(Task.FromResult(expectedResult));
+        var initialMealPlanId = -1L;
+        A.CallTo(() => mealPlan.Id).Returns(initialMealPlanId);
+
+        var newMealPlanId = 1L;
+        A.CallTo(() => mealPlansRepository.AddMealPlan(mealPlan)).Returns(Task.FromResult(newMealPlanId));
 
         // Act
         var result = await SUT.SaveMealPlan(mealPlan);
@@ -105,10 +107,14 @@ public class MealPlansServiceTests
         // Assert
         A.CallToSet(() => mealPlan.UserId).To(GlobalTestData.USER_ID).MustHaveHappenedOnceExactly();
 
-        A.CallTo(() => mealPlansRepository.AddMealPlan(mealPlan)).MustHaveHappenedOnceExactly();
-        A.CallTo(() => mealPlansRepository.UpdateMealPlan(mealPlan)).MustNotHaveHappened();
+        // This assertion is necessary because the code changes the id of the meal plan if it is newly added to the database.
+        A.CallToSet(() => mealPlan.Id).To(newMealPlanId).MustHaveHappenedOnceExactly();
 
-        result.Should().Be(expectedResult);
+        A.CallTo(() => mealPlansRepository.AddMealPlan(mealPlan)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => mealPlansRepository.Save()).MustNotHaveHappened();
+
+        // Result should be the initial meal plan id because the meal plan is a dummy and SUT cannot change properties of dummy objects.
+        result.Should().Be(initialMealPlanId);
     }
 
     [TestMethod]
@@ -132,7 +138,7 @@ public class MealPlansServiceTests
         A.CallTo(() => mealPlansRepository.GetMealPlanById(mealPlanId)).Returns(Task.FromResult<MealPlan?>(existingMealPlan));
 
         var expectedResult = mealPlanId;
-        A.CallTo(() => mealPlansRepository.UpdateMealPlan(newMealPlan)).Returns(Task.FromResult(expectedResult));
+        A.CallTo(() => mealPlansRepository.Save()).Returns(Task.FromResult(expectedResult));
 
         // Act
         var result = await SUT.SaveMealPlan(newMealPlan);
@@ -145,7 +151,7 @@ public class MealPlansServiceTests
         A.CallToSet(() => existingMealPlan.RequiredProteins).To(newMealPlan.RequiredProteins).MustHaveHappenedOnceExactly();
 
         A.CallTo(() => mealPlansRepository.AddMealPlan(newMealPlan)).MustNotHaveHappened();
-        A.CallTo(() => mealPlansRepository.UpdateMealPlan(newMealPlan)).MustHaveHappenedOnceExactly();
+        A.CallTo(() => mealPlansRepository.Save()).MustHaveHappenedOnceExactly();
 
         result.Should().Be(expectedResult);
     }

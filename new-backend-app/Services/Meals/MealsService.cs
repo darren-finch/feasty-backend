@@ -67,7 +67,7 @@ public class MealsService : IMealsService
         if (meal.Id < 0)
         {
             meal.UserId = userId;
-            await mealsRepository.AddMeal(meal);
+            meal.Id = await mealsRepository.AddMeal(meal);
         }
         else
         {
@@ -84,7 +84,7 @@ public class MealsService : IMealsService
             existingMeal.Title = meal.Title;
             existingMeal.MealFoods = meal.MealFoods;
 
-            await mealsRepository.UpdateMeal(existingMeal);
+            await mealsRepository.Save();
         }
 
         return meal.Id;

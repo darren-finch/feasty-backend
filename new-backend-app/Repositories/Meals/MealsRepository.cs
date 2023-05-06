@@ -36,15 +36,14 @@ public class MealsRepository : IMealsRepository
         return meal.Id;
     }
 
-    public async Task<long> UpdateMeal(Meal meal)
-    {
-        await dbContext.SaveChangesAsync();
-        return meal.Id;
-    }
-
     public async Task DeleteMeal(Meal meal)
     {
         dbContext.Meals.Remove(meal);
+        await dbContext.SaveChangesAsync();
+    }
+
+    public async Task Save()
+    {
         await dbContext.SaveChangesAsync();
     }
 }
