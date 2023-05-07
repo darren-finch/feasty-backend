@@ -14,9 +14,9 @@ public class MealFood
     public virtual long FoodId { get; set; }
 
     [JsonIgnore]
-    public virtual Meal Meal { get; set; } = null!;
+    public virtual Meal? Meal { get; set; } = null!;
 
-    public virtual Food BaseFood { get; set; } = null!;
+    public virtual Food? BaseFood { get; set; } = null!;
 
     [Required]
     public virtual double DesiredQuantity { get; set; }

@@ -9,11 +9,30 @@ using new_backend.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Configuration.AddEnvironmentVariables(prefix: "FEASTYWEB_");
+
 // Add services to the container.
+var corsPolicyName = "CorsPolicy";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(corsPolicyName, policy =>
+    {
+        policy
+            .WithOrigins(builder.Configuration["AllowedOrigins"]!.Split(","))
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddControllers();
 builder.Services.AddLogging();
 builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-builder.Services.AddDbContext<FeastyDbContext>(options => options.UseSqlite("Data Source=feasty.db"));
+builder.Services.AddDbContext<FeastyDbContext>(options =>
+{
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DBCONNECTION"));
+    options.EnableSensitiveDataLogging();
+});
+
 builder.Services.AddScoped<IAuthManager, AuthManager>(serviceProvider =>
 {
     var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
@@ -43,7 +62,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 var app = builder.Build();
 
+
 app.UseMiddleware<ErrorHandlerMiddleware>();
+
+app.UseCors(corsPolicyName);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -51,8 +73,6 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
-app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UsePathBase("/api");

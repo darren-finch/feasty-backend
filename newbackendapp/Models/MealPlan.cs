@@ -24,5 +24,5 @@ public class MealPlan
     [Required]
     public virtual int RequiredProteins { get; set; }
 
-    public virtual List<MealPlanMeal> MealPlanMeals { get; set; }
+    public virtual List<MealPlanMeal> MealPlanMeals { get; set; } = new List<MealPlanMeal>();
 }

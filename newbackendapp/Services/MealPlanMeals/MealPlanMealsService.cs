@@ -52,6 +52,9 @@ public class MealPlanMealsService : IMealPlanMealsService
             throw new UnauthorizedException("You do not have permission to add your meal to this meal plan.");
         }
 
+        mealPlanMeal.Meal = existingMeal;
+        mealPlanMeal.MealPlan = existingMealPlan;
+
         await mealPlanMealRepository.SaveMealPlanMeal(mealPlanMeal);
     }
 

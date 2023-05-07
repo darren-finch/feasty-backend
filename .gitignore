@@ -536,3 +536,8 @@ FodyWeavers.xsd
 *.db-wal
 
 .DS_Store
+
+appsettings.Production.json
+appsettings.Release.json
+
+run-app-dev.zsh

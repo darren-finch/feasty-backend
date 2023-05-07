@@ -5,7 +5,6 @@ namespace new_backend.Models
 {
     public class Food
     {
-        [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public virtual long Id { get; set; }
 

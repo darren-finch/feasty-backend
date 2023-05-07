@@ -168,6 +168,8 @@ public class MealPlanMealsServiceTests
         await SUT.SaveMealPlanMeal(mealPlanMeal);
 
         // Assert
+        A.CallToSet(() => mealPlanMeal.Meal).To(meal).MustHaveHappenedOnceExactly();
+        A.CallToSet(() => mealPlanMeal.MealPlan).To(mealPlan).MustHaveHappenedOnceExactly();
         A.CallTo(() => mealPlanMealsRepository.SaveMealPlanMeal(mealPlanMeal)).MustHaveHappenedOnceExactly();
     }
 

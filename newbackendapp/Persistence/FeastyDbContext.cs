@@ -17,6 +17,10 @@ namespace new_backend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Food>().Property(food => food.Id).UseIdentityAlwaysColumn();
+            modelBuilder.Entity<Meal>().Property(food => food.Id).UseIdentityAlwaysColumn();
+            modelBuilder.Entity<MealPlan>().Property(food => food.Id).UseIdentityAlwaysColumn();
+
             modelBuilder.Entity<MealFood>()
                 .HasKey(mealFood => new { mealFood.MealId, mealFood.FoodId });
 

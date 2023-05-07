@@ -59,7 +59,6 @@ public class MealsService : IMealsService
                 throw new UnauthorizedException($"You are not authorized to access this food.");
             }
 
-            // TODO: Test this if it's not too much of a pain
             mealFood.BaseFood = food;
             mealFood.Meal = meal;
         }

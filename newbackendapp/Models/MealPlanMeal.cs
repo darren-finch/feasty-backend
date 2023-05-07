@@ -12,7 +12,7 @@ public class MealPlanMeal
     public virtual long MealId { get; set; }
 
     [JsonIgnore]
-    public virtual MealPlan MealPlan { get; set; }
+    public virtual MealPlan? MealPlan { get; set; } = null!;
 
-    public virtual Meal Meal { get; set; }
+    public virtual Meal? Meal { get; set; } = null!;
 }
